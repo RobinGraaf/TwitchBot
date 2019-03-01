@@ -10,10 +10,6 @@ using Newtonsoft.Json.Linq;
 
 namespace TwitchBot {
     public static class ChatLink {
-        private static TcpClient tcpClient;
-        private static StreamReader reader;
-        private static StreamWriter writer;
-
         public static string Channel { get; set; }
         public static string ChannelName { get; set; }
         public static string Username { get; set; }
@@ -21,42 +17,46 @@ namespace TwitchBot {
         public static string ChatLog { get; set; }
         public static string BotCommandPrefix { get; set; }
 
-        private static string chatMessagePrefix;
-        private static DateTime lastMessageSendtime;
+        private static TcpClient _tcpClient;
+        private static StreamReader _reader;
+        private static StreamWriter _writer;
 
-        private static Queue<string> sendMessageQueue;
+        private static string _chatMessagePrefix;
+        private static DateTime _lastMessageSendtime;
+
+        private static Queue<string> _sendMessageQueue;
         
-        private static IList<Command> commands;
-        private static JArray commandsArray;
+        private static IList<Command> _commands;
+        private static JArray _userCommandsArray, _botCommandsArray, _allCommandsArray;
 
         public static void StartBot()
         {
-            sendMessageQueue = new Queue<string>();
+            _sendMessageQueue = new Queue<string>();
 
             if (string.IsNullOrEmpty(BotCommandPrefix)) { BotCommandPrefix = "!"; }
 
             ChannelName = Channel.ToLower();
-            chatMessagePrefix = String.Format(":{0}!{0}@{0}.tmi.twitch.tv PRIVMSG #{1} :", Username.ToLower(), ChannelName);
+            _chatMessagePrefix = String.Format(":{0}!{0}@{0}.tmi.twitch.tv PRIVMSG #{1} :", Username.ToLower(), ChannelName);
 
             Connect();
         }
 
         private static void Connect() {
-            tcpClient = new TcpClient("irc.twitch.tv", 6667);
-            reader = new StreamReader(tcpClient.GetStream());
-            writer = new StreamWriter(tcpClient.GetStream());
-            writer.AutoFlush = true;
+            _tcpClient = new TcpClient("irc.twitch.tv", 6667);
+            _reader = new StreamReader(_tcpClient.GetStream());
+            _writer = new StreamWriter(_tcpClient.GetStream());
+            _writer.AutoFlush = true;
 
             //password = File.ReadAllText("password.txt");
 
-            writer.WriteLine("PASS " + Password + Environment.NewLine
+            _writer.WriteLine("PASS " + Password + Environment.NewLine
                              + "NICK " + Username + Environment.NewLine
                              + "USER " + Username + " 8 * :" + Username);
 
-            //writer.WriteLine("CAP REQ :twitch.tv/membership");
-            writer.WriteLine("JOIN #" + ChannelName);
-            lastMessageSendtime = DateTime.Now;
-            if (tcpClient.Connected) {
+            //_writer.WriteLine("CAP REQ :twitch.tv/membership");
+            _writer.WriteLine("JOIN #" + ChannelName);
+            _lastMessageSendtime = DateTime.Now;
+            if (_tcpClient.Connected) {
                 MessageBox.Show("Connected!", "", MessageBoxButtons.OK);
             } else {
                 MessageBox.Show("Could not connect, please try again!", "", MessageBoxButtons.OK);
@@ -64,12 +64,12 @@ namespace TwitchBot {
         }
 
         private static void SendTwitchMessage(string speaker, string message) {
-            sendMessageQueue.Enqueue(message);
+            _sendMessageQueue.Enqueue(message);
         }
 
         public static void TimerTick()
         {
-            if (!tcpClient.Connected) {
+            if (!_tcpClient.Connected) {
                 Connect();
             }
 
@@ -78,9 +78,9 @@ namespace TwitchBot {
         }
 
         private static void TryReceivingMessages() {
-            if (tcpClient.Available > 0) {
-                var message = reader.ReadLine();
-                ChatLog += $"\r\n[speaker]: {message}";
+            if (_tcpClient.Available > 0) {
+                var message = _reader.ReadLine();
+                //ChatLog += $"\r\n[speaker]: {message}";
 
                 //aLabel.Text += $"\r\n{message}";
 
@@ -105,21 +105,10 @@ namespace TwitchBot {
             if (message.ToLower().StartsWith(BotCommandPrefix)) {
                 ChatLog += $"\r\n[{speaker}]: {message}";
 
-                dynamic allCommands = File.ReadAllText("botcommands.txt");
-                if (allCommands.Length > 0)
-                {
-                    commandsArray = JArray.Parse(allCommands);
+                _commands = GetAllCommands();
 
-                    commands = commandsArray.Select(c => new Command()
-                    {
-                        CommandText = (string) c["CommandText"],
-                        Response = (string) c["Response"],
-                        Description = (string) c["Description"]
-                    }).ToList();
-                }
-
-                if (commands != null && commands.Count > 0) {
-                    foreach (dynamic command in commands) {
+                if (_commands != null && _commands.Count > 0) {
+                    foreach (dynamic command in _commands) {
                         if (message.ToLower().Contains(command.CommandText)) {
                             if (command.Response.Length > 0) {
                                 SendTwitchMessage(speaker, command.Response);
@@ -132,15 +121,42 @@ namespace TwitchBot {
 
         private static void TrySendingMessages()
         {
-            if (DateTime.Now - lastMessageSendtime > TimeSpan.FromSeconds(2))
+            if (DateTime.Now - _lastMessageSendtime > TimeSpan.FromSeconds(2))
             {
-                if (sendMessageQueue.Count > 0)
+                if (_sendMessageQueue.Count > 0)
                 {
-                    var message = sendMessageQueue.Dequeue();
-                    writer.WriteLine("{0}{1} \r\n", chatMessagePrefix, message);
-                    lastMessageSendtime = DateTime.Now;
+                    var message = _sendMessageQueue.Dequeue();
+                    _writer.WriteLine("{0}{1} \r\n", _chatMessagePrefix, message);
+                    _lastMessageSendtime = DateTime.Now;
                 }
             }
+        }
+
+        public static IList<Command> GetAllCommands()
+        {
+            IList<Command> commandsList = new List<Command>();
+            dynamic allBotCommands = File.ReadAllText("botcommands.txt");
+            dynamic allUserCommands = File.ReadAllText("userbotcommands.txt");
+            if (allUserCommands.Length > 0 || allBotCommands.Length > 0) {
+                _botCommandsArray = JArray.Parse(allBotCommands);
+                _userCommandsArray = JArray.Parse(allUserCommands);
+
+                _allCommandsArray = new JArray { _botCommandsArray, _userCommandsArray };
+
+                commandsList = _allCommandsArray.Select(c => new Command() {
+                    CommandText = (string)c["CommandText"],
+                    Response = (string)c["Response"],
+                    Description = (string)c["Description"]
+                }).ToList();
+            }
+
+            return commandsList;
+        }
+        
+        public static void ClearCommands() {
+            File.WriteAllText("userbotcommands.txt", "");
+            _userCommandsArray?.Clear();
+            _commands?.Clear();
         }
     }
 }

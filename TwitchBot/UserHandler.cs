@@ -11,10 +11,10 @@ using Newtonsoft.Json.Linq;
 
 namespace TwitchBot {
     public class UserHandler {
-        private static List<string> viewers = new List<string>();
-        private static List<string> knownUsernames = new List<string>();
-        private static List<User> users = new List<User>();
-        private static JArray usersArray;
+        private static List<string> _viewers = new List<string>();
+        private static List<string> _knownUsernames = new List<string>();
+        private static List<User> _users = new List<User>();
+        private static JArray _usersArray;
 
         public static void AddPoints()
         {
@@ -25,30 +25,30 @@ namespace TwitchBot {
 
             if (allUsers.Length > 0)
             {
-                usersArray = new JArray();
-                usersArray = JArray.Parse(allUsers);
-                users = usersArray.ToObject<List<User>>();
+                _usersArray = new JArray();
+                _usersArray = JArray.Parse(allUsers);
+                _users = _usersArray.ToObject<List<User>>();
             }
 
-            knownUsernames = users.Select(u => u.Username).ToList();
+            _knownUsernames = _users.Select(u => u.Username).ToList();
 
             // Compare viewers to users
-            var usersAndViewers = knownUsernames.Intersect(viewers).ToList();
-            var viewersNotUsers = viewers.Except(knownUsernames).ToList();
+            var usersAndViewers = _knownUsernames.Intersect(_viewers).ToList();
+            var viewersNotUsers = _viewers.Except(_knownUsernames).ToList();
 
             // Add new user or add points to users
             foreach (var user in usersAndViewers)
             {
-                users.First(u => u.Username == user).Points += 1;
+                _users.First(u => u.Username == user).Points += 1;
 
-                usersArray = new JArray();
-                usersArray.Add(users.Select(u => new JObject
+                _usersArray = new JArray();
+                _usersArray.Add(_users.Select(u => new JObject
                 {
                     {"Username", u.Username},
                     {"Points", u.Points}
                 }));
 
-                File.WriteAllText("users.txt", usersArray.ToString());
+                File.WriteAllText("users.txt", _usersArray.ToString());
             }
 
             foreach (string viewer in viewersNotUsers)
@@ -65,7 +65,7 @@ namespace TwitchBot {
                 JArray allChattersArray = (JArray) allChattersObj["chatters"]["viewers"];
                 if (allChattersArray.Count > 0)
                 {
-                    viewers = allChattersArray.Select(u => (string) u).ToList();
+                    _viewers = allChattersArray.Select(u => (string) u).ToList();
                 }
             }
         }
@@ -77,23 +77,23 @@ namespace TwitchBot {
                 Username = username,
                 Points = 0
             };
-            users.Add(newUser);
+            _users.Add(newUser);
 
-            usersArray = new JArray();
-            usersArray.Add(users.Select(c => new JObject
+            _usersArray = new JArray();
+            _usersArray.Add(_users.Select(c => new JObject
             {
                 {"Username", c.Username},
                 {"Points", c.Points}
             }));
 
-            File.WriteAllText("users.txt", usersArray.ToString());
+            File.WriteAllText("users.txt", _usersArray.ToString());
         }
 
         public static void ClearPoints()
         {
             File.WriteAllText("users.txt", "");
-            users?.Clear();
-            usersArray?.Clear();
+            _users?.Clear();
+            _usersArray?.Clear();
         }
     }
 }

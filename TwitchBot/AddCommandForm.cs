@@ -24,7 +24,7 @@ namespace TwitchBot {
 
         private void saveCommandButton_Click(object sender, EventArgs e) {
 
-            dynamic allCommands = File.ReadAllText("botcommands.txt");
+            dynamic allCommands = File.ReadAllText("userbotcommands.txt");
 
             if (allCommands.Length > 0)
             {
@@ -57,7 +57,7 @@ namespace TwitchBot {
                     {"Description", c.Description}
                 }));
 
-                File.WriteAllText("botcommands.txt", commandArray.ToString());
+                File.WriteAllText("userbotcommands.txt", commandArray.ToString());
 
                 this.Close();
             }

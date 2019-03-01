@@ -11,13 +11,13 @@ using System.Windows.Forms;
 namespace TwitchBot {
     public partial class SettingsForm : Form
     {
-        private MainScreen screen;
+        private readonly MainScreen _screen;
 
         public SettingsForm()
         {
-            screen = (MainScreen) Application.OpenForms["MainScreen"];
+            _screen = (MainScreen) Application.OpenForms["MainScreen"];
             InitializeComponent();
-            pointTimerText.Text = (screen.pointsTimer.Interval / 60000).ToString();
+            pointTimerText.Text = (_screen.pointsTimer.Interval / 60000).ToString();
             prefixBox.Text = ChatLink.BotCommandPrefix;
         }
 
@@ -27,7 +27,7 @@ namespace TwitchBot {
             {
                 if (int.TryParse(pointTimerText.Text, out int interval))
                 {
-                    screen.pointsTimer.Interval = interval * 60000;
+                    _screen.pointsTimer.Interval = interval * 60000;
                 }
             }
 
@@ -37,7 +37,7 @@ namespace TwitchBot {
             }
 
             this.Hide();
-            MessageBox.Show($"Interval set to {screen.pointsTimer.Interval / 60000} minutes \r\n" +
+            MessageBox.Show($"Interval set to {_screen.pointsTimer.Interval / 60000} minutes \r\n" +
                             $"Bot command prefix set to '{ChatLink.BotCommandPrefix}'", "", MessageBoxButtons.OK);
         }
 
@@ -55,12 +55,12 @@ namespace TwitchBot {
         private void resetPointsButton_Click(object sender, EventArgs e)
         {
             UserHandler.ClearPoints();
-            MessageBox.Show("Points Cleared!", "Clear Commands", MessageBoxButtons.OK);
+            MessageBox.Show("Points Cleared!", "Clear Points", MessageBoxButtons.OK);
         }
 
         private void resetCommandsButton_Click(object sender, EventArgs e) 
         {
-            screen.ClearCommands();
+            ChatLink.ClearCommands();
             MessageBox.Show("Commands Cleared!", "Clear Commands", MessageBoxButtons.OK);
         }
     }
