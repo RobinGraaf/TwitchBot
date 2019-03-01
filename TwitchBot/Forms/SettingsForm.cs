@@ -48,7 +48,7 @@ namespace TwitchBot {
         }
 
         private void prefixHelp_Click(object sender, EventArgs e) {
-            MessageBox.Show("The prefix used to call bot commands (default: '!'). Every character is taken into account (including spaces etc.).", "",
+            MessageBox.Show("The prefix used to call bot commands (default: '!'). Don't use spaces!.", "",
                 MessageBoxButtons.OK);
         }
 
