@@ -63,7 +63,7 @@ namespace TwitchBot {
             }
         }
 
-        private static void SendTwitchMessage(string speaker, string message) {
+        public static void SendTwitchMessage(string message) {
             _sendMessageQueue.Enqueue(message);
         }
 
@@ -72,7 +72,7 @@ namespace TwitchBot {
             if (!_tcpClient.Connected) {
                 Connect();
             }
-
+            
             TryReceivingMessages();
             TrySendingMessages();
         }
@@ -104,19 +104,30 @@ namespace TwitchBot {
 
             if (message.ToLower().StartsWith(BotCommandPrefix)) {
                 ChatLog += $"\r\n[{speaker}]: {message}";
-
                 _commands = GetAllCommands();
 
-                if (_commands != null && _commands.Count > 0) {
+                if (_commands.Count > 0) {
                     foreach (dynamic command in _commands) {
-                        if (message.ToLower().Contains(command.CommandText)) {
-                            if (command.Response.Length > 0) {
-                                SendTwitchMessage(speaker, command.Response);
+                        if (message.ToLower().Contains(command.CommandText.ToLower()) && message[1] != ' ')
+                        {
+                            if (command.IsBotCommand)
+                            {
+                                RunBotCommand(speaker, message);
                             }
+                            else if (command.Response.Length > 0) {
+                                SendTwitchMessage(command.Response);
+                            }
+
                         }
                     }
                 }
             }
+        }
+
+        private static void RunBotCommand(string speaker, string message)
+        {
+            if (message.Contains("points")) { BotCommandHandler.PointsCommand(speaker); }
+            else if (message.Contains("bet")) { BotCommandHandler.BetCommand(speaker, int.Parse(message.Split(' ')[1])); }
         }
 
         private static void TrySendingMessages()
@@ -134,7 +145,10 @@ namespace TwitchBot {
 
         public static IList<Command> GetAllCommands()
         {
-            IList<Command> commandsList = new List<Command>();
+            IList<Command> commandsList;
+            IList<Command> botCommandsList = new List<Command>();
+            IList<Command> userCommandsList = new List<Command>();
+
             dynamic allBotCommands = File.ReadAllText("botcommands.txt");
             dynamic allUserCommands = File.ReadAllText("userbotcommands.txt");
             if (allUserCommands.Length > 0 || allBotCommands.Length > 0) {
@@ -143,14 +157,24 @@ namespace TwitchBot {
 
                 _allCommandsArray = new JArray { _botCommandsArray, _userCommandsArray };
 
-                commandsList = _allCommandsArray.Select(c => new Command() {
+                botCommandsList = _botCommandsArray.Select(c => new Command() {
+                    IsBotCommand = (bool)c["IsBotCommand"],
                     CommandText = (string)c["CommandText"],
                     Response = (string)c["Response"],
                     Description = (string)c["Description"]
                 }).ToList();
-            }
 
-            return commandsList;
+                userCommandsList = _userCommandsArray.Select(c => new Command() {
+                    IsBotCommand = (bool)c["IsBotCommand"],
+                    CommandText = (string)c["CommandText"],
+                    Response = (string)c["Response"],
+                    Description = (string)c["Description"]
+                }).ToList();
+
+                commandsList = new List<Command>(botCommandsList.Concat(userCommandsList));
+                return commandsList;
+            }
+            return null;
         }
         
         public static void ClearCommands() {

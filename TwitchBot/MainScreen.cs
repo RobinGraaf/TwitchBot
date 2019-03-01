@@ -42,6 +42,8 @@ namespace TwitchBot
                 tokenTextBox.Text = values[2];
                 ChatLink.BotCommandPrefix = values[3];
             }
+
+            UserHandler.SetupUsers();
         }
 
         private void SetupBot()
@@ -79,12 +81,14 @@ namespace TwitchBot
         private void showCommandsButton_Click(object sender, EventArgs e)
         {
             _commands = ChatLink.GetAllCommands();
-            if (_commands.Count > 0)
+            if (_commands != null && _commands.Count > 0)
             {
                 var commandStringToPrint = "";
                 foreach (dynamic commandData in _commands)
                 {
-                    commandStringToPrint += $"\r\nCommand: {ChatLink.BotCommandPrefix}{commandData.CommandText} | Response: {commandData.Response} | Description: {commandData.Description}";
+                    commandStringToPrint += $"\r\nCommand: {ChatLink.BotCommandPrefix}{commandData.CommandText} ";
+                    if (commandData.Response.Length > 0) commandStringToPrint += $"| Response: {commandData.Response} ";
+                    commandStringToPrint += $"| Description: {commandData.Description}";
                 }
                 MessageBox.Show(commandStringToPrint, "All Commands", MessageBoxButtons.OK);
             }
@@ -107,7 +111,7 @@ namespace TwitchBot
 
         private void pointsTimer_Tick(object sender, EventArgs e)
         {
-            UserHandler.AddPoints();
+            UserHandler.AddPointsToAll();
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

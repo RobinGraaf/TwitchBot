@@ -54,6 +54,7 @@
     <Compile Include="AddCommandForm.Designer.cs">
       <DependentUpon>AddCommandForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="BotCommandHandler.cs" />
     <Compile Include="ChatLink.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="MainScreen.cs">

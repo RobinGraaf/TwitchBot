@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TwitchBot {
     public class Command
     {
-        public int Id { get; set; }
+        public bool IsBotCommand { get; set; }
         public string CommandText { get; set; }
         public string Response { get; set; }
         public string Description { get; set; }

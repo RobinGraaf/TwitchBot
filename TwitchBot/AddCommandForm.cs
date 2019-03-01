@@ -52,6 +52,7 @@ namespace TwitchBot {
 
                 commandArray.Add(commands.Select(c => new JObject
                 {
+                    {"IsBotCommand", false},
                     {"CommandText", c.CommandText},
                     {"Response", c.Response},
                     {"Description", c.Description}
