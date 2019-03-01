@@ -19,8 +19,9 @@ namespace TwitchBot {
         public static string Username { get; set; }
         public static string Password { get; set; }
         public static string ChatLog { get; set; }
+        public static string BotCommandPrefix { get; set; }
 
-        private static string chatMessagePrefix, botCommandPrefix;
+        private static string chatMessagePrefix;
         private static DateTime lastMessageSendtime;
 
         private static Queue<string> sendMessageQueue;
@@ -32,7 +33,7 @@ namespace TwitchBot {
         {
             sendMessageQueue = new Queue<string>();
 
-            botCommandPrefix = "!";
+            if (string.IsNullOrEmpty(BotCommandPrefix)) { BotCommandPrefix = "!"; }
 
             ChannelName = Channel.ToLower();
             chatMessagePrefix = String.Format(":{0}!{0}@{0}.tmi.twitch.tv PRIVMSG #{1} :", Username.ToLower(), ChannelName);
@@ -100,9 +101,10 @@ namespace TwitchBot {
         }
 
         private static void ReceiveMessage(string speaker, string message) {
-            ChatLog += $"\r\n[{speaker}]: {message}";
 
-            if (message.ToLower().StartsWith(botCommandPrefix)) {
+            if (message.ToLower().StartsWith(BotCommandPrefix)) {
+                ChatLog += $"\r\n[{speaker}]: {message}";
+
                 dynamic allCommands = File.ReadAllText("botcommands.txt");
                 if (allCommands.Length > 0)
                 {
