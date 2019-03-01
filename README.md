@@ -1,10 +1,13 @@
 # Twitch Bot
 
-coming soon.
+A twitch bot written in **C# .NET** with the help of **JSON.NET**. This twitch bot has a point system, with which viewers can bet their points for a change to double their bet. There's also a raffle minigame included, which picks one viewer from the lists as a winner.
 
 ### What I've Learned
 
-* coming soon.
+* Creating a C# .NET Form application
+* Reading and writing from a TCP Client in .NET
+* Using Json (JObjects and JArrays)
+* Saving and reading Json objects from .txt files.
 
 ## How To Setup
 
