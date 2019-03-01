@@ -30,6 +30,9 @@
             this.prefixHelp = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.prefixBox = new System.Windows.Forms.TextBox();
+            this.resetPointsButton = new System.Windows.Forms.Button();
+            this.resetCommandsButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // pointTimerText
@@ -94,11 +97,44 @@
             this.prefixBox.Size = new System.Drawing.Size(100, 20);
             this.prefixBox.TabIndex = 4;
             // 
+            // resetPointsButton
+            // 
+            this.resetPointsButton.Location = new System.Drawing.Point(29, 146);
+            this.resetPointsButton.Name = "resetPointsButton";
+            this.resetPointsButton.Size = new System.Drawing.Size(100, 23);
+            this.resetPointsButton.TabIndex = 7;
+            this.resetPointsButton.Text = "Reset Points";
+            this.resetPointsButton.UseVisualStyleBackColor = true;
+            this.resetPointsButton.Click += new System.EventHandler(this.resetPointsButton_Click);
+            // 
+            // resetCommandsButton
+            // 
+            this.resetCommandsButton.Location = new System.Drawing.Point(29, 175);
+            this.resetCommandsButton.Name = "resetCommandsButton";
+            this.resetCommandsButton.Size = new System.Drawing.Size(100, 23);
+            this.resetCommandsButton.TabIndex = 8;
+            this.resetCommandsButton.Text = "Reset Commands";
+            this.resetCommandsButton.UseVisualStyleBackColor = true;
+            this.resetCommandsButton.Click += new System.EventHandler(this.resetCommandsButton_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Red;
+            this.label2.Location = new System.Drawing.Point(36, 130);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(86, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "DANGER ZONE";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(166, 289);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.resetCommandsButton);
+            this.Controls.Add(this.resetPointsButton);
             this.Controls.Add(this.prefixHelp);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.prefixBox);
@@ -122,5 +158,8 @@
         private System.Windows.Forms.Button prefixHelp;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox prefixBox;
+        private System.Windows.Forms.Button resetPointsButton;
+        private System.Windows.Forms.Button resetCommandsButton;
+        private System.Windows.Forms.Label label2;
     }
 }

@@ -26,6 +26,7 @@ namespace TwitchBot {
         {
             if (!File.Exists("botcommands.txt")) { File.Create("botcommands.txt"); }
             if (!File.Exists("botvalues.txt")) { File.Create("botvalues.txt"); }
+            if (string.IsNullOrEmpty(ChatLink.BotCommandPrefix)) { ChatLink.BotCommandPrefix = "!"; }
 
             InitializeComponent();
             SetValues();
@@ -33,9 +34,13 @@ namespace TwitchBot {
 
         private void SetValues()
         {
-            LinkLabel.Link link = new LinkLabel.Link();
-            link.LinkData = "https://twitchapps.com/tmi/";
-            tokenLinkLabel.Links.Add(link);
+            LinkLabel.Link tokenLink = new LinkLabel.Link();
+            tokenLink.LinkData = "https://twitchapps.com/tmi/";
+            tokenLinkLabel.Links.Add(tokenLink);
+
+            LinkLabel.Link siteLink = new LinkLabel.Link();
+            siteLink.LinkData = "https://robingraaf.nl/";
+            websiteLinkLabel.Links.Add(siteLink);
 
             string botvalues = File.ReadAllText("botvalues.txt");
             string[] values = botvalues.Split(',');
@@ -44,6 +49,7 @@ namespace TwitchBot {
                 channelTextBox.Text = values[0];
                 botnameTextBox.Text = values[1];
                 tokenTextBox.Text = values[2];
+                ChatLink.BotCommandPrefix = values[3];
             }
         }
 
@@ -67,7 +73,7 @@ namespace TwitchBot {
 
         private void SaveValues()
         {
-            string values = ChatLink.Channel + "," + ChatLink.Username + "," + ChatLink.Password;
+            string values = ChatLink.Channel + "," + ChatLink.Username + "," + ChatLink.Password + "," + ChatLink.BotCommandPrefix;
             File.WriteAllText("botvalues.txt", values);
         }
 
@@ -96,7 +102,7 @@ namespace TwitchBot {
 
                 foreach (dynamic commandData in commands)
                 {
-                    commandStringToPrint += $"\r\nCommand: {commandData.CommandText} | Response: {commandData.Response} | Description: {commandData.Description}";
+                    commandStringToPrint += $"\r\nCommand: {ChatLink.BotCommandPrefix}{commandData.CommandText} | Response: {commandData.Response} | Description: {commandData.Description}";
                 }
                 MessageBox.Show(commandStringToPrint, "All Commands", MessageBoxButtons.OK);
             }
@@ -111,11 +117,10 @@ namespace TwitchBot {
             commandForm.Show();
         }
 
-        private void clearCommandsButton_Click(object sender, EventArgs e) {
+        public void ClearCommands() {
             File.WriteAllText("botcommands.txt", "");
             commandsArray?.Clear();
             commands?.Clear();
-            MessageBox.Show("Commands Cleared!", "Clear Commands", MessageBoxButtons.OK);
         }
 
         private void settingsButton_Click(object sender, EventArgs e) {
@@ -134,6 +139,11 @@ namespace TwitchBot {
         private void minigamesButton_Click(object sender, EventArgs e) {
             MinigamesForm minigamesForm = new MinigamesForm();
             minigamesForm.Show();
+        }
+
+        private void websiteLink_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(e.Link.LinkData as string);
         }
 
         private void startBotButton_Click(object sender, EventArgs e) {

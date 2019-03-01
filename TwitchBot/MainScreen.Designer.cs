@@ -36,10 +36,12 @@
             this.startBotButton = new System.Windows.Forms.Button();
             this.showCommandsButton = new System.Windows.Forms.Button();
             this.addCommandButton = new System.Windows.Forms.Button();
-            this.clearCommandsButton = new System.Windows.Forms.Button();
             this.pointsTimer = new System.Windows.Forms.Timer(this.components);
             this.settingsButton = new System.Windows.Forms.Button();
             this.minigamesButton = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.websiteLinkLabel = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // aLabel
@@ -128,7 +130,7 @@
             // 
             // showCommandsButton
             // 
-            this.showCommandsButton.Location = new System.Drawing.Point(370, 29);
+            this.showCommandsButton.Location = new System.Drawing.Point(530, 29);
             this.showCommandsButton.Name = "showCommandsButton";
             this.showCommandsButton.Size = new System.Drawing.Size(143, 23);
             this.showCommandsButton.TabIndex = 9;
@@ -138,23 +140,13 @@
             // 
             // addCommandButton
             // 
-            this.addCommandButton.Location = new System.Drawing.Point(530, 29);
+            this.addCommandButton.Location = new System.Drawing.Point(690, 29);
             this.addCommandButton.Name = "addCommandButton";
             this.addCommandButton.Size = new System.Drawing.Size(143, 23);
             this.addCommandButton.TabIndex = 10;
             this.addCommandButton.Text = "Add Command";
             this.addCommandButton.UseVisualStyleBackColor = true;
             this.addCommandButton.Click += new System.EventHandler(this.addCommandButton_Click);
-            // 
-            // clearCommandsButton
-            // 
-            this.clearCommandsButton.Location = new System.Drawing.Point(690, 29);
-            this.clearCommandsButton.Name = "clearCommandsButton";
-            this.clearCommandsButton.Size = new System.Drawing.Size(143, 23);
-            this.clearCommandsButton.TabIndex = 11;
-            this.clearCommandsButton.Text = "Clear Commands";
-            this.clearCommandsButton.UseVisualStyleBackColor = true;
-            this.clearCommandsButton.Click += new System.EventHandler(this.clearCommandsButton_Click);
             // 
             // pointsTimer
             // 
@@ -181,14 +173,48 @@
             this.minigamesButton.UseVisualStyleBackColor = true;
             this.minigamesButton.Click += new System.EventHandler(this.minigamesButton_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(391, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(64, 39);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Made By:\r\n\r\nRobin Graaf";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(401, 79);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(43, 13);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "© 2019";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // websiteLinkLabel
+            // 
+            this.websiteLinkLabel.AutoSize = true;
+            this.websiteLinkLabel.Location = new System.Drawing.Point(391, 55);
+            this.websiteLinkLabel.Name = "websiteLinkLabel";
+            this.websiteLinkLabel.Size = new System.Drawing.Size(65, 13);
+            this.websiteLinkLabel.TabIndex = 16;
+            this.websiteLinkLabel.TabStop = true;
+            this.websiteLinkLabel.Text = "robingraaf.nl";
+            this.websiteLinkLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.websiteLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.websiteLink_LinkClicked_1);
+            // 
             // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(845, 450);
+            this.Controls.Add(this.websiteLinkLabel);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.minigamesButton);
             this.Controls.Add(this.settingsButton);
-            this.Controls.Add(this.clearCommandsButton);
             this.Controls.Add(this.addCommandButton);
             this.Controls.Add(this.showCommandsButton);
             this.Controls.Add(this.startBotButton);
@@ -221,10 +247,12 @@
         private System.Windows.Forms.Button startBotButton;
         private System.Windows.Forms.Button showCommandsButton;
         private System.Windows.Forms.Button addCommandButton;
-        private System.Windows.Forms.Button clearCommandsButton;
         private System.Windows.Forms.Button settingsButton;
         public System.Windows.Forms.Timer pointsTimer;
         private System.Windows.Forms.Button minigamesButton;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.LinkLabel websiteLinkLabel;
     }
 }
 

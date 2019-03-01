@@ -130,13 +130,17 @@ namespace TwitchBot {
             }
         }
 
-        private static void TrySendingMessages() {
-            
-                if (sendMessageQueue.Count > 0) {
+        private static void TrySendingMessages()
+        {
+            if (DateTime.Now - lastMessageSendtime > TimeSpan.FromSeconds(2))
+            {
+                if (sendMessageQueue.Count > 0)
+                {
                     var message = sendMessageQueue.Dequeue();
                     writer.WriteLine("{0}{1} \r\n", chatMessagePrefix, message);
                     lastMessageSendtime = DateTime.Now;
                 }
+            }
         }
     }
 }

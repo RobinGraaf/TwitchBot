@@ -88,5 +88,12 @@ namespace TwitchBot {
 
             File.WriteAllText("users.txt", usersArray.ToString());
         }
+
+        public static void ClearPoints()
+        {
+            File.WriteAllText("users.txt", "");
+            users?.Clear();
+            usersArray?.Clear();
+        }
     }
 }

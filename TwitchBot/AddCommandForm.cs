@@ -34,6 +34,10 @@ namespace TwitchBot {
             Command command = new Command();
 
             commandIsSet = TextBoxHandler.CheckForInput(commandTextBox, out var commandText);
+            if (commandText.StartsWith(ChatLink.BotCommandPrefix))
+            {
+                commandText = commandText.Replace(ChatLink.BotCommandPrefix, "");
+            }
             command.CommandText = commandText;
 
             responseIsSet = TextBoxHandler.CheckForInput(responseTextBox, out var responseText);
