@@ -54,7 +54,7 @@ namespace TwitchBot {
                 AddNewUser(chatter);
             }
 
-            ChatLink.ChatLog += $"\r\n[{DateTime.Now}] Adding Points!";
+            ChatLink.ChatLog.Add($"\r\n[{DateTime.Now}] Adding Points!");
         }
 
         public static void AddPointsToUser(string user, int points)

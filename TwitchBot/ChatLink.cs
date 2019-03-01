@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
+using TwitchBot.Objects;
 
 namespace TwitchBot {
     public static class ChatLink {
@@ -14,7 +15,7 @@ namespace TwitchBot {
         public static string ChannelName { get; set; }
         public static string Username { get; set; }
         public static string Password { get; set; }
-        public static string ChatLog { get; set; }
+        public static List<string> ChatLog { get; set; }
         public static string BotCommandPrefix { get; set; }
 
         private static TcpClient _tcpClient;
@@ -29,8 +30,11 @@ namespace TwitchBot {
         private static IList<Command> _commands;
         private static JArray _userCommandsArray, _botCommandsArray, _allCommandsArray;
 
+        public static EventHandler<NewMessageArgs> OnNewMessage;
+
         public static void StartBot()
         {
+            ChatLog = new List<string>();
             _sendMessageQueue = new Queue<string>();
 
             if (string.IsNullOrEmpty(BotCommandPrefix)) { BotCommandPrefix = "!"; }
@@ -102,8 +106,23 @@ namespace TwitchBot {
 
         private static void ReceiveMessage(string speaker, string message) {
 
+            if (OnNewMessage != null)
+            {
+                NewMessageArgs args = new NewMessageArgs();
+                args.Speaker = speaker;
+                args.Message = message;
+                OnNewMessage(null, args);
+            }
+
             if (message.ToLower().StartsWith(BotCommandPrefix)) {
-                ChatLog += $"\r\n[{speaker}]: {message}";
+
+                if (ChatLog.Count > 20)
+                {
+                    ChatLog.RemoveAt(0);
+                }
+
+                ChatLog.Add($"\r\n[{speaker}]: {message}");
+                
                 _commands = GetAllCommands();
 
                 if (_commands.Count > 0) {

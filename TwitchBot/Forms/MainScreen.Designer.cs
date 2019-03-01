@@ -171,6 +171,7 @@
             this.minigamesButton.TabIndex = 13;
             this.minigamesButton.Text = "Minigames";
             this.minigamesButton.UseVisualStyleBackColor = true;
+            this.minigamesButton.Visible = false;
             this.minigamesButton.Click += new System.EventHandler(this.minigamesButton_Click);
             // 
             // label4

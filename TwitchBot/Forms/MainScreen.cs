@@ -16,7 +16,6 @@ namespace TwitchBot
             if (!File.Exists("userbotcommands.txt")) File.Create("userbotcommands.txt");
             if (!File.Exists("botcommands.txt")) File.Create("botcommands.txt");
             if (!File.Exists("botvalues.txt")) File.Create("botvalues.txt");
-            if (string.IsNullOrEmpty(ChatLink.BotCommandPrefix)) ChatLink.BotCommandPrefix = "!";
 
             InitializeComponent();
             SetValues();
@@ -41,7 +40,10 @@ namespace TwitchBot
                 botnameTextBox.Text = values[1];
                 tokenTextBox.Text = values[2];
                 ChatLink.BotCommandPrefix = values[3];
+                pointsTimer.Interval = int.Parse(values[4]);
             }
+
+            if (string.IsNullOrEmpty(ChatLink.BotCommandPrefix)) ChatLink.BotCommandPrefix = "!";
 
             UserHandler.SetupUsers();
         }
@@ -57,6 +59,8 @@ namespace TwitchBot
             _tokenIsSet = TextBoxHandler.CheckForInput(tokenTextBox, out var passwordText);
             ChatLink.Password = passwordText;
 
+            minigamesButton.Show();
+
             if (_channelIsSet && _botnameIsSet && _tokenIsSet)
             {
                 SaveValues();
@@ -67,7 +71,7 @@ namespace TwitchBot
         private void SaveValues()
         {
             var values = ChatLink.Channel + "," + ChatLink.Username + "," + ChatLink.Password + "," +
-                         ChatLink.BotCommandPrefix;
+                         ChatLink.BotCommandPrefix + "," + pointsTimer.Interval;
             File.WriteAllText("botvalues.txt", values);
         }
 
@@ -138,7 +142,8 @@ namespace TwitchBot
         private void timer1_Tick(object sender, EventArgs e)
         {
             ChatLink.TimerTick();
-            aLabel.Text = ChatLink.ChatLog;
+            
+            aLabel.Text = string.Join("", ChatLink.ChatLog);
         }
     }
 }
